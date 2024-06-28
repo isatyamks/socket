@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
-from flask_sock
+from flask_socketio import SocketIO
+
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 @app.route('/')
 def signup():
@@ -16,5 +18,9 @@ def home():
     else:
         return redirect(url_for('signup'))
 
+@socketio.on('join')
+def handle_join_room_event(data):
+    app.logger.info(f"{data['username']} has joined the room {data['room']}")
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)

@@ -16,10 +16,43 @@
     </h2>
     <div id="messages"></div>
 
-    <form action="#" method="post">
+    <form id="message-form" action="#" method="post">
         <input type="text" placeholder="Enter your message here" name="message" required>
         <button type="submit">Send</button>
     </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const socket = io.connect("http://127.0.0.1:5000");
+
+            socket.on('connect', function () {
+                socket.emit('join', {
+                    username: "{{ username }}",
+                    room: "{{ room }}"
+                });
+            });
+
+            // const form = document.getElementById('message-form');
+            // form.addEventListener('submit', function (event) {
+            //     event.preventDefault();
+            //     const message = form.elements['message'].value;
+            //     socket.emit('send_message', {
+            //         username: "{{ username }}",
+            //         room: "{{ room }}",
+            //         message: message
+            //     });
+            //     form.elements['message'].value = '';
+            // });
+
+            // socket.on('receive_message', function (data) {
+            //     const messages = document.getElementById('messages');
+            //     const newMessage = document.createElement('div');
+            //     newMessage.textContent = `${data.username}: ${data.message}`;
+            //     messages.appendChild(newMessage);
+            // });
+        });
+    </script>
 </body>
 
 </html>

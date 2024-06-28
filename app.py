@@ -1,9 +1,5 @@
-from flask import Flask,render_template,request,redirect
-
-
-
-
-
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sock
 app = Flask(__name__)
 
 @app.route('/')
@@ -15,11 +11,10 @@ def home():
     username = request.args.get('username')
     room = request.args.get('room')
 
-
     if username and room:
-        return render_template('home.html')
+        return render_template('home.html', username=username, room=room)
     else:
-        return redirect
+        return redirect(url_for('signup'))
 
 if __name__ == '__main__':
     app.run(debug=True)

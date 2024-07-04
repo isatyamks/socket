@@ -73,6 +73,9 @@
         }
 
         li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
@@ -82,12 +85,17 @@
         }
 
         li form {
-            display: inline;
+            display: flex;
+            align-items: center;
+        }
+
+        li form input[type="password"] {
+            margin-right: 10px;
         }
 
         li form button {
             width: auto;
-            margin: 0 5px;
+            margin: 0;
         }
 
         p {
@@ -99,6 +107,23 @@
         @media (max-width: 600px) {
             form, ul {
                 padding: 10px;
+            }
+
+            li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            li form {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: space-between;
+            }
+
+            li form input[type="password"],
+            li form button {
+                width: calc(50% - 12px);
+                margin: 5px 0;
             }
 
             button {
@@ -120,7 +145,7 @@
     <ul>
         {% for code, room in rooms.items() %}
         <li>
-            {{ code }} - Members: {{ room.members }}
+            <span>{{ code }} - Members: {{ room.members }}</span>
             <form method="post">
                 <input type="text" name="name" value="{{ session.name }}" hidden>
                 <input type="text" name="code" value="{{ code }}" hidden>

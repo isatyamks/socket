@@ -8,7 +8,7 @@ socketio = SocketIO(app)
 def signup():
     return render_template("signup.html")
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     username = request.args.get('username')
     room = request.args.get('room')
@@ -18,7 +18,7 @@ def home():
     else:
         return redirect(url_for('signup'))
 
-@socketio.on('send_message')
+@socketio.on('send_message',methods=['GET','POST'])
 def handle_send_message_event(data):
     app.logger.info(f"{data['username']} has sent message to the room {data['room']}: {data['message']}")
     socketio.emit('receive_message', data, room=data['room'])

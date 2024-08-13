@@ -2,13 +2,13 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_socketio import SocketIO, join_room
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def signup():
     return render_template("signup.html")
 
-@app.route('/home', methods=['GET', 'POST'])
+@app.route('/home')
 def home():
     username = request.args.get('username')
     room = request.args.get('room')
@@ -29,5 +29,3 @@ def handle_join_room_event(data):
     join_room(data['room'])
     socketio.emit('join_room_announcement', data, room=data['room'])
 
-if __name__ == '__main__':
-    socketio.run(app, debug=True)

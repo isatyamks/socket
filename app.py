@@ -4,8 +4,11 @@ from flask_socketio import SocketIO, join_room
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def signup():
+    if request.method == 'POST':
+        # handle signup logic
+        pass
     return render_template("signup.html")
 
 @app.route('/home')

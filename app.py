@@ -18,12 +18,12 @@ def home():
     else:
         return redirect(url_for('signup'))
 
-@socketio.on('send_message', methods=['GET', 'POST'])
+@socketio.on('send_message')
 def handle_send_message_event(data):
     app.logger.info(f"{data['username']} has sent message to the room {data['room']}: {data['message']}")
     socketio.emit('receive_message', data, room=data['room'])
 
-@socketio.on('join', methods=['GET', 'POST'])
+@socketio.on('join')
 def handle_join_room_event(data):
     app.logger.info(f"{data['username']} has joined the room {data['room']}")
     join_room(data['room'])

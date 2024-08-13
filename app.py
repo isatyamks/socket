@@ -8,15 +8,11 @@ socketio = SocketIO(app)
 def signup():
     return render_template("signup.html")
 
-@app.route('/home',, methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     username = request.args.get('username')
     room = request.args.get('room')
-
-    if username and room:
-        return render_template('home.html', username=username, room=room)
-    else:
-        return redirect(url_for('signup'))
+    return render_template('home.html', username=username, room=room)
 
 @socketio.on('send_message')
 def handle_send_message_event(data):

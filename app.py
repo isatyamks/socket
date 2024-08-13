@@ -6,12 +6,9 @@ socketio = SocketIO(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        # handle signup logic
-        pass
     return render_template("signup.html")
 
-@app.route('/home', methods=['GET', 'POST'])
+@app.route('/home',, methods=['GET', 'POST'])
 def home():
     username = request.args.get('username')
     room = request.args.get('room')
@@ -32,5 +29,6 @@ def handle_join_room_event(data):
     join_room(data['room'])
     socketio.emit('join_room_announcement', data, room=data['room'])
 
-if __name__ == '__main__':
-    socketio.run(app)
+
+
+

@@ -11,7 +11,7 @@ def signup():
         pass
     return render_template("signup.html")
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     username = request.args.get('username')
     room = request.args.get('room')

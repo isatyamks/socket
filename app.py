@@ -12,10 +12,14 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def signup():
     return render_template("signup.html")
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
-    username = request.args.get('username')
-    room = request.args.get('room')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        room = request.form.get('room')
+    else:
+        username = request.args.get('username')
+        room = request.args.get('room')
 
     if username and room:
         return render_template('home.html', username=username, room=room)

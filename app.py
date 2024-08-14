@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_socketio import SocketIO, join_room
+from flask_cors import CORS
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Initialize SocketIO with CORS support
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
 def signup():
@@ -20,7 +24,7 @@ def home():
 
 @socketio.on('send_message')
 def handle_send_message_event(data):
-    app.logger.info(f"{data['username']} has sent message to the room {data['room']}: {data['message']}")
+    app.logger.info(f"{data['username']} has sent a message to the room {data['room']}: {data['message']}")
     socketio.emit('receive_message', data, room=data['room'])
 
 @socketio.on('join')

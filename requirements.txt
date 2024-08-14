@@ -1,6 +1,6 @@
 Flask
 Werkzeug
 flask_socketio
-
+flask_cors
 
 

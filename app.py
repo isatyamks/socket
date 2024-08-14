@@ -22,9 +22,9 @@ def home():
         room = request.args.get('room')
 
     if username and room:
-        return render_template('home', username=username, room=room)
+        return render_template('home.html', username=username, room=room)
     else:
-        return redirect(url_for('signup'))
+        return redirect(url_for('home.html', username=username, room=room))
 
 @socketio.on('send_message')
 def handle_send_message_event(data):

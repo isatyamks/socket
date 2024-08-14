@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_socketio import SocketIO, join_room
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app)
 
 @app.route('/')
 def signup():
@@ -29,3 +29,5 @@ def handle_join_room_event(data):
     join_room(data['room'])
     socketio.emit('join_room_announcement', data, room=data['room'])
 
+if __name__ == '__main__':
+    socketio.run(app, debug=True)

@@ -9,7 +9,7 @@
 
 <body>
     <h1>
-        Welcome to gr, {{ room }}
+        Welcome to our chat room, {{ room }}
     </h1>
     <h2>
         Username: {{ username }}
@@ -34,22 +34,21 @@
 
                 const messageInput = document.getElementById('message-input');
                 const messageForm = document.getElementById('message-form');
-                messageInput.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const message = messageInput.value.trim();
 
-                        if (message.length) {
-                            socket.emit('send_message', {
-                                username: "{{ username }}",
-                                room: "{{ room }}",
-                                message: message
-                            });
-                        }
-                        messageInput.value = '';
-                        messageInput.focus();
+                messageForm.onsubmit = function (e) {
+                    e.preventDefault();
+                    const message = messageInput.value.trim();
+
+                    if (message.length) {
+                        socket.emit('send_message', {
+                            username: "{{ username }}",
+                            room: "{{ room }}",
+                            message: message
+                        });
                     }
-                });
+                    messageInput.value = '';
+                    messageInput.focus();
+                };
             });
 
             socket.on('join_room_announcement', function (data) {

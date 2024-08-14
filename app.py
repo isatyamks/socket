@@ -22,7 +22,7 @@ def home():
         room = request.args.get('room')
 
     if username and room:
-        return render_template('home.html', username=username, room=room)
+        return render_template('home', username=username, room=room)
     else:
         return redirect(url_for('signup'))
 

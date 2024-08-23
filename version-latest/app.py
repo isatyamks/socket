@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import join_room, leave_room, send, SocketIO
+import random
 from string import ascii_uppercase
 
 app = Flask(__name__)
@@ -7,6 +8,17 @@ app.config["SECRET_KEY"] = "hjhjsdahhds"
 socketio = SocketIO(app)
 
 rooms = {}
+
+def generate_unique_code(length):
+    while True:
+        code = ""
+        for _ in range(length):
+            code += random.choice(ascii_uppercase)
+        
+        if code not in rooms:
+            break
+    
+    return code
 
 @app.route("/", methods=["POST", "GET"])
 def home():
@@ -24,7 +36,11 @@ def home():
             return render_template("home.html", error="Please enter a room code.", code=code, name=name)
         
         room = code
-        return render_template("home.html", error="Room does not exist.", code=code, name=name)
+        if create != False:
+            room = generate_unique_code(4)
+            rooms[room] = {"members": 0, "messages": []}
+        elif code not in rooms:
+            return render_template("home.html", error="Room does not exist.", code=code, name=name)
         
         session["room"] = room
         session["name"] = name

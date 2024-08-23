@@ -20,7 +20,6 @@ def generate_unique_code(length):
     
     return code
 
-
 @app.route("/", methods=["POST", "GET"])
 def home():
     session.clear()
@@ -38,7 +37,7 @@ def home():
         
         room = code
         if create != False:
-            room = code
+            room = generate_unique_code(4)
             rooms[room] = {"members": 0, "messages": []}
         elif code not in rooms:
             return render_template("home.html", error="Room does not exist.", code=code, name=name)

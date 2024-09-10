@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <form action="{{ url_for('home') }}" method="get">
-        <label for="username">Userdsname:</label>
-        <input type="text" id="username" name="username">
-        <label for="room">Room:</label>
-        <input type="text" id="room" name="room">
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <div class="signup-box">
+            <h1>Join the Chat</h1>
+            <form action="/home" method="POST">
+                <input type="text" name="username" placeholder="Enter your username" required>
+                <input type="text" name="room" placeholder="Enter room name" required>
+                <button type="submit">Join Chat</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

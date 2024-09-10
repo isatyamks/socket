@@ -1,71 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 </head>
-
 <body>
-    <h1>
-        Welcome to our chat room, {{ room }}
-    </h1>
-    <h2>
-        Username: {{ username }}
-    </h2>
-    <div id="messages"></div>
+    <div class="container">
+        <div class="chat-box">
+            <h2>Room: {{ room }}</h2>
+            <div id="chat-window" class="chat-window"></div>
+            <div class="input-box">
+                <input type="text" id="messageInput" placeholder="Type a message...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
 
-    <form id="message-form" action="#" method="post">
-        <input type="text" id="message-input" placeholder="Enter your message here" name="message" required>
-        <button type="submit">Send</button>
-    </form>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const socket = io.connect("http://127.0.0.1:5000");
+        const socket = io();
 
-            socket.on('connect', function () {
-                socket.emit('join', {
-                    username: "{{ username }}",
-                    room: "{{ room }}"
-                });
+        socket.emit('join', { username: "{{ username }}", room: "{{ room }}" });
 
-                const messageInput = document.getElementById('message-input');
-                const messageForm = document.getElementById('message-form');
-
-                messageForm.onsubmit = function (e) {
-                    e.preventDefault();
-                    const message = messageInput.value.trim();
-
-                    if (message.length) {
-                        socket.emit('send_message', {
-                            username: "{{ username }}",
-                            room: "{{ room }}",
-                            message: message
-                        });
-                    }
-                    messageInput.value = '';
-                    messageInput.focus();
-                };
-            });
-
-            socket.on('join_room_announcement', function (data) {
-                const messages = document.getElementById('messages');
-                const newMessage = document.createElement('div');
-                newMessage.textContent = `${data.username} has joined the room ${data.room}`;
-                messages.appendChild(newMessage);
-            });
-
-            socket.on('receive_message', function (data) {
-                const messages = document.getElementById('messages');
-                const newMessage = document.createElement('div');
-                newMessage.textContent = `${data.username}: ${data.message}`;
-                messages.appendChild(newMessage);
-            });
+        socket.on('receive_message', (data) => {
+            const chatWindow = document.getElementById('chat-window');
+            const newMessage = document.createElement('p');
+            newMessage.textContent = `${data.username}: ${data.message}`;
+            chatWindow.appendChild(newMessage);
         });
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            if (message.trim() !== "") {
+                socket.emit('send_message', {
+                    username: "{{ username }}",
+                    room: "{{ room }}",
+                    message: message
+                });
+                messageInput.value = '';
+            }
+        }
     </script>
 </body>
-
 </html>

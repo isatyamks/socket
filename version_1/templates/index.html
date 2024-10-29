@@ -16,7 +16,7 @@
     <ul id="messages"></ul>
     <input id="message" autocomplete="off" /><button onclick="sendMessage()">Send</button>
     <script>
-        const socket = io();
+        const socket = io('https://isatyamks.onrender.com');
 
         socket.on('message', function(msg) {
             const item = document.createElement('li');

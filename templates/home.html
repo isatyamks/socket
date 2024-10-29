@@ -20,7 +20,7 @@
     </div>
 
     <script>
-        const socket = io();
+        const socket = io('https://isatyamks.onrender.com/');
 
         socket.emit('join', { username: "{{ username }}", room: "{{ room }}" });
 

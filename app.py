@@ -12,7 +12,7 @@ rooms = {}
 
 @app.route('/')
 def home():
-    return "Real-Time Chat API is Running!"
+    return render_template('index.html')  # Serve the main frontend
 
 @app.route('/login', methods=['POST'])
 def login():

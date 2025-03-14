@@ -1,0 +1,1 @@
+the commnand is ----> pyinstaller --onefile --noconsole --name your_program_name your_script.py

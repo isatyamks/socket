@@ -36,4 +36,9 @@ def main():
         sio.disconnect()
 
 if __name__ == "__main__":
-    main()
+    password = "satyam0024"
+    user_password = input("Enter the password: ")
+    if user_password == password:
+        main()
+    else:
+        print("Incorrect password. Access denied.")

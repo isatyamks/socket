@@ -4,7 +4,7 @@ sio = socketio.Client()
 
 @sio.event
 def connect():
-    print("Connected to the isatyamks_socket server!")
+    print("Connected to the chat server!")
 
 @sio.event
 def message(data):
@@ -36,4 +36,9 @@ def main():
         sio.disconnect()
 
 if __name__ == "__main__":
-    main()
+    password = "satyam0024"
+    user_password = input("Enter the password: ")
+    if user_password == password:
+        main()
+    else:
+        print("Incorrect password. Access denied.")

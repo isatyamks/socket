@@ -16,13 +16,13 @@ def disconnect():
     print("Disconnected from the chat server.")
 
 def main():
-    # Connect to your Render-hosted server (update the URL if needed)
-    server_url = "https://socket-io-flask-chat-app-1.onrender.com"
+    server_url = "https://socket-dsff.onrender.com"
     sio.connect(server_url)
     
     try:
+        name = input("Enter your Username: ")
         while True:
-            msg = input("You: ")
+            msg = input(f"{name}: ")
             if msg.lower() == 'exit':
                 break
             sio.send(msg)

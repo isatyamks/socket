@@ -31,7 +31,7 @@ def on_join(username):
     # Check if the username is already taken by any connected user.
     if username in users.values():
         # Emit an error back to the client.
-        emit('error', {'msg': 'Username already taken. Please choose a different one.'})
+        emit('error', {'msg': 'change username'})
         return
     # Save the username associated with this client's session id.
     users[request.sid] = username
@@ -42,14 +42,14 @@ def on_join(username):
 @socketio.on('message')
 def handle_message(msg):
     # Retrieve the username for the client that sent the message.
-    username = users.get(request.sid, "Anonymous")
+    username = users.get(request.sid)
     full_msg = f"{username}: {msg}"
     send(full_msg, broadcast=True)
     logger.info(full_msg)
 
 @socketio.on('disconnect')
 def on_disconnect():
-    username = users.pop(request.sid, "Anonymous")
+    username = users.pop(request.sid)
     msg = f"{username} has left the chat."
     send(msg, broadcast=True)
     logger.info(msg)

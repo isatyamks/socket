@@ -4,7 +4,7 @@ eventlet.monkey_patch()  # Must be called before any other imports!
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from flask import Flask, render_template, request
+from flask import Flask, request
 from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
@@ -22,16 +22,17 @@ logger.addHandler(log_handler)
 # Dictionary to keep track of connected users: { session_id: username }
 users = {}
 
+# Simple root route (no HTML required)
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return "Chat server is running"
 
 @socketio.on('join')
 def on_join(username):
     # Check if the username is already taken by any connected user.
     if username in users.values():
         # Emit an error back to the client.
-        emit('error', {'msg': 'change username'})
+        emit('error', {'msg': 'Username already taken. Please choose a different one.'})
         return
     # Save the username associated with this client's session id.
     users[request.sid] = username
@@ -42,17 +43,18 @@ def on_join(username):
 @socketio.on('message')
 def handle_message(msg):
     # Retrieve the username for the client that sent the message.
-    username = users.get(request.sid)
+    username = users.get(request.sid, "Anonymous")
     full_msg = f"{username}: {msg}"
     send(full_msg, broadcast=True)
     logger.info(full_msg)
 
 @socketio.on('disconnect')
 def on_disconnect():
-    username = users.pop(request.sid)
-    msg = f"{username} has left the chat."
-    send(msg, broadcast=True)
-    logger.info(msg)
+    username = users.pop(request.sid, None)
+    if username:
+        msg = f"{username} has left the chat."
+        send(msg, broadcast=True)
+        logger.info(msg)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

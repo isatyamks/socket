@@ -1,42 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_socketio import SocketIO, join_room
-from flask_cors import CORS
+from flask import Flask, render_template
+from flask_socketio import SocketIO, send
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['SECRET_KEY'] = 'your_secret_key'
+socketio = SocketIO(app)
 
-# Initialize SocketIO with CORS support
-socketio = SocketIO(app, cors_allowed_origins="*")
+# A simple route to verify the server is running.
+@app.route("/")
+def index():
+    return "Chat server is running!"
 
-@app.route('/')
-def signup():
-    return render_template("signup.html")
-
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        room = request.form.get('room')
-    else:
-        username = request.args.get('username')
-        room = request.args.get('room')
-
-    if username and room:
-        return render_template('home.html', username=username, room=room)
-    else:
-        return redirect(url_for('signup'))
-
-@socketio.on('send_message')
-def handle_send_message_event(data):
-    app.logger.info(f"{data['username']} has sent a message to the room {data['room']}: {data['message']}")
-    socketio.emit('receive_message', data, room=data['room'])
-
-@socketio.on('join')
-def handle_join_room_event(data):
-    app.logger.info(f"{data['username']} has joined the room {data['room']}")
-    join_room(data['room'])
-    socketio.emit('join_room_announcement', data, room=data['room'])
-
+# Handle incoming messages
+@socketio.on('message')
+def handle_message(msg):
+    print('Received message: ' + msg)
+    # Broadcast the message to all connected clients
+    send(msg, broadcast=True)
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    # Run the app on all available IP addresses on port 5000.
+    socketio.run(app, host="0.0.0.0", port=5000)

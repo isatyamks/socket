@@ -16,14 +16,11 @@ def disconnect():
 
 @sio.event
 def error(data):
-    # Print the error message sent by the server, for example if username is already taken.
     print("Error:", data.get("msg", "Unknown error"))
 
 def main():
-    server_url = "https://socket-dsff.onrender.com"  # Replace with your actual Render URL
+    server_url = "https://socket-dsff.onrender.com"
     sio.connect(server_url)
-    
-    # Prompt for username and emit the "join" event so the server can register the username.
     name = input("Enter your Username: ")
     sio.emit('join', name)
     

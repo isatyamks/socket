@@ -9,7 +9,7 @@ def connect():
 
 @sio.event
 def message(data):
-    print("Message received:", data)
+    print(data)
 
 @sio.event
 def disconnect():
@@ -19,10 +19,11 @@ def main():
     server_url = "https://socket-dsff.onrender.com"
     sio.connect(server_url)
     
+    name = input("Enter your name: ")
+
     try:
-        name = input("Enter your Username: ")
         while True:
-            msg = input(f"{name}: ")
+            msg = input(f"{name} : ")
             if msg.lower() == 'exit':
                 break
             sio.send(msg)

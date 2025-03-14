@@ -4,7 +4,7 @@ sio = socketio.Client()
 
 @sio.event
 def connect():
-    print("Connected to the chat server!")
+    print("Connected to the isatyamks_socket server!")
 
 @sio.event
 def message(data):

@@ -3,6 +3,7 @@ eventlet.monkey_patch()
 
 import os
 import logging
+import time
 from logging.handlers import TimedRotatingFileHandler
 from flask import Flask, request
 from flask_socketio import SocketIO, send, emit
@@ -20,6 +21,8 @@ log_handler.setFormatter(formatter)
 logger.addHandler(log_handler)
 
 users = {}
+last_message_time = 0
+message_delay = 0.1  # 100ms delay between messages
 
 @app.route('/')
 def index():
@@ -37,10 +40,18 @@ def on_join(username):
 
 @socketio.on('message')
 def handle_message(msg):
+    global last_message_time
     username = users.get(request.sid, "Anonymous")
     full_msg = f"{username}: {msg}"
+    
+    # Add a small delay if messages are coming too quickly
+    current_time = time.time()
+    if current_time - last_message_time < message_delay:
+        eventlet.sleep(message_delay)
+    
     send(full_msg, broadcast=True)
     logger.info(full_msg)
+    last_message_time = time.time()
 
 @socketio.on('disconnect')
 def on_disconnect():

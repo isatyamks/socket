@@ -15,8 +15,8 @@ This sneaky little terminal-based app lets you and your hostel buddies collabora
 - Stealth mode (Alt+Tab to your IDE if the teacher walks by)
 
 ## Quick Start
-1. Download the `ChatInLab.exe` file (your new best friend in practicals)
-2. Run the `ChatInLab.exe` file (it looks like a normal terminal window)
+1. Download the `client.exe` file (your new best friend in practicals)
+2. Run the `client.exe` file (it looks like a normal terminal window)
 3. Enter the password (it's like the secret handshake)
 4. Enter your username (pick something cool, but not too obvious)
 5. Start communicating! (Your practical just got a whole lot easier)
@@ -61,7 +61,7 @@ If you're the one who's actually building this for your friends:
 ## File Structure
 - `app.py`: The server that runs in your hostel (where the smart friends are)
 - `client.py`: The client that runs in the lab (where you're panicking)
-- `ChatInLab.exe`: The executable that saves your grades
+- `client.exe`: The executable that saves your grades
 - `requirements.txt`: The boring stuff that makes it work
 - `README.md`: This file you're reading right now
 

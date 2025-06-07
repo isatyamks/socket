@@ -36,7 +36,7 @@ def main():
         sio.disconnect()
 
 if __name__ == "__main__":
-    password = "idiot9835"
+    password = "free1902"
     user_password = input("Enter the password: ")
     if user_password == password:
         main()

@@ -1,42 +1,66 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_socketio import SocketIO, join_room
-from flask_cors import CORS
+import eventlet
+eventlet.monkey_patch() 
+
+import os
+import logging
+import time
+from logging.handlers import TimedRotatingFileHandler
+from flask import Flask, request
+from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['SECRET_KEY'] = 'your_secret_key'
+socketio = SocketIO(app)
 
-# Initialize SocketIO with CORS support
-socketio = SocketIO(app, cors_allowed_origins="*")
+# Configure rotating logging (rotate every hour; keep last 24 hours)
+logger = logging.getLogger('chat_app')
+logger.setLevel(logging.INFO)
+log_handler = TimedRotatingFileHandler('chat.log', when='H', interval=1, backupCount=24)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+log_handler.setFormatter(formatter)
+logger.addHandler(log_handler)
+
+users = {}
+last_message_time = 0
+message_delay = 0.1  # 100ms delay between messages
 
 @app.route('/')
-def signup():
-    return render_template("signup.html")
-
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        room = request.form.get('room')
-    else:
-        username = request.args.get('username')
-        room = request.args.get('room')
-
-    if username and room:
-        return render_template('home.html', username=username, room=room)
-    else:
-        return redirect(url_for('signup'))
-
-@socketio.on('send_message')
-def handle_send_message_event(data):
-    app.logger.info(f"{data['username']} has sent a message to the room {data['room']}: {data['message']}")
-    socketio.emit('receive_message', data, room=data['room'])
+def index():
+    return "Chat server is running"
 
 @socketio.on('join')
-def handle_join_room_event(data):
-    app.logger.info(f"{data['username']} has joined the room {data['room']}")
-    join_room(data['room'])
-    socketio.emit('join_room_announcement', data, room=data['room'])
+def on_join(username):
+    if username in users.values():
+        emit('error', {'msg': 'Username already taken. Please choose a different one.'})
+        return
+    users[request.sid] = username
+    msg = f"{username} has joined the chat."
+    send(msg, broadcast=True)
+    logger.info(msg)
 
+@socketio.on('message')
+def handle_message(msg):
+    global last_message_time
+    username = users.get(request.sid, "Anonymous")
+    full_msg = f"{username}: {msg}"
+    
+    # Add a small delay if messages are coming too quickly
+    current_time = time.time()
+    if current_time - last_message_time < message_delay:
+        eventlet.sleep(message_delay)
+    
+    send(full_msg, broadcast=True)
+    logger.info(full_msg)
+    last_message_time = time.time()
 
-if __name__ == "__main__":
-    socketio.run(app, debug=True)
+@socketio.on('disconnect')
+def on_disconnect():
+    username = users.pop(request.sid, None)
+    if username:
+        msg = f"{username} has left the chat."
+        send(msg, broadcast=True)
+        logger.info(msg)
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host='0.0.0.0', port=port)
